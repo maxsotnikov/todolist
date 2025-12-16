@@ -1,6 +1,7 @@
 import {Button} from "./Button.tsx";
 import {FilterValuesType, Task, TodolistType} from "./commontypes.ts";
-import {useState} from "react";
+import {CreateItemForm} from "./CreateItemForm.tsx";
+import {EditableSpan} from "./EditableSpan.tsx";
 
 type Props = {
   todolistId: TodolistType['id']
@@ -12,6 +13,8 @@ type Props = {
   changeToDoListFilter: (nextFilterValue: FilterValuesType, todolistId: TodolistType['id']) => void,
   createTask: (title: Task['title'], todolistId: TodolistType['id']) => void
   changetaskStatus: (taskId: Task['id'], newTaskStatus: Task['isDone'], todolistId: TodolistType['id']) => void
+  changeToDolistTitle: (title: TodolistType['title'], todolistId: TodolistType['id']) => void
+  changeTaskTitle: (taskId: Task['id'], title: Task['title'], todolistId: TodolistType['id']) => void
 }
 
 export const Todolist = ({
@@ -21,16 +24,20 @@ export const Todolist = ({
                            deleteTask,
                            changeToDoListFilter,
                            createTask,
-                           changetaskStatus, todolistId, deleteTodolist
+                           changetaskStatus,
+                           todolistId,
+                           deleteTodolist,
+                           changeToDolistTitle,
+                           changeTaskTitle,
                          }: Props) => {
-  const [taskInput, setTaskInput] = useState('');
-  const [error, setError] = useState(false);
-
 
   const list = tasks.length === 0
     ? <span>Your takslist is empty</span>
     : <ul>
       {tasks.map(t => {
+        const changeTaskTitleHandler = (newTitle: Task['title']) => {
+          changeTaskTitle(t.id, newTitle, todolistId)
+        }
         return (
           <li className={t.isDone ? 'task-done' : 'task'}>
             <input
@@ -38,7 +45,10 @@ export const Todolist = ({
               checked={t.isDone}
               onChange={e => changetaskStatus(t.id, e.currentTarget.checked, todolistId)}
             />
-            <span>{t.title}</span>
+            <EditableSpan
+              title={t.title}
+              changeTitle={changeTaskTitleHandler}
+            />
             <Button
               title={'x'}
               onClick={() => deleteTask(t.id, todolistId)}
@@ -48,54 +58,29 @@ export const Todolist = ({
       })}
     </ul>
 
-  const createTaskHandler = () => {
-    const trimmedTitle = taskInput.trim()
-    if (trimmedTitle !== '') {
-      createTask(trimmedTitle, todolistId)
-    } else {
-      setError(true);
-    }
-    setTaskInput('');
+  const createTaskHandler = (taskTitle: Task['title']) => {
+    createTask(taskTitle, todolistId)
+  }
+  const changeTodolistTitleHandler = (newTitle: TodolistType['title']) => {
+    changeToDolistTitle(newTitle, todolistId)
   }
 
   return (
     <div>
       <h3>
-        {title}
-        <Button title={'x'} onClick={() => deleteTodolist(todolistId)}/>
-      </h3>
-      <div>
-        <input
-          placeholder='max length of tasks must be 10'
-          value={taskInput}
-          onChange={(e) => {
-            error && setError(false);
-            if (e.currentTarget.value.length < 12) {
-              setTaskInput(e.currentTarget.value)
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              createTaskHandler()
-            }
-          }}
-          className={error ? 'input-error' : ''}
+        <EditableSpan
+          title={title}
+          changeTitle={changeTodolistTitleHandler}
         />
         <Button
-          title={'+'}
-          disabled={taskInput.length === 0 || taskInput.length > 10}
-          onClick={createTaskHandler}
+          title={'x'}
+          onClick={() => deleteTodolist(todolistId)}
         />
-        {taskInput && taskInput.length <= 10 &&
-          <div>max length mast be 10 charters</div>
-        }
-        {taskInput.length > 10 &&
-          <div style={{color: "red"}}>task title is too long</div>
-        }
-        {error &&
-          <div style={{color: "red"}}>enter is valid</div>
-        }
-      </div>
+      </h3>
+      <CreateItemForm
+        createItem={createTaskHandler}
+        maxTitleLength={10}
+      />
       {list}
       <div>
         <Button

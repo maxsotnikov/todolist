@@ -8,6 +8,7 @@ import {
 } from "./commontypes.ts";
 import {useState} from "react";
 import {v1} from "uuid";
+import {CreateItemForm} from "./CreateItemForm.tsx";
 
 function App() {
   //BLL
@@ -30,6 +31,7 @@ function App() {
     ]
   });
 
+  //tasks
   const deleteTask = (taskId: Task['id'], todolistId: TodolistType['id']) => {
     // 1. Иммютабельное создание нового состояния (nextState)
     // const currentTasksArray: Task[] = tasks[todolistId]
@@ -44,7 +46,6 @@ function App() {
       [todolistId]: tasks[todolistId].filter(t => t.id !== taskId)
     });
   }
-
   const createTask = (title: Task['title'], todolistId: TodolistType['id']) => {
     const newTask: Task = {
       id: v1(),
@@ -60,7 +61,6 @@ function App() {
 
     setTasks({...tasks, [todolistId]: [...tasks[todolistId], newTask]})
   }
-
   const changetaskStatus = (taskId: Task['id'], newTaskStatus: Task['isDone'], todolistId: TodolistType['id']) => {
     setTasks({
       ...tasks,
@@ -70,12 +70,25 @@ function App() {
       } : task)
     })
   }
+  const changeTaskTitle = (taskId: Task['id'], title: Task['title'], todolistId: TodolistType['id']) => {
+    setTasks({
+      ...tasks,
+      [todolistId]: tasks[todolistId].map(task => task.id === taskId ? {
+        ...task,
+        title
+      } : task)
+    })
+  }
 
+  //todolists
   const changeToDoListFilter = (nextFilterValue: FilterValuesType, todolistId: TodolistType['id']) => {
     const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {...tl, filter: nextFilterValue} : tl))
     setTodolists(nextState)
   }
-
+  const changeToDolistTitle = (title: TodolistType['title'], todolistId: TodolistType['id']) => {
+    const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {...tl, title: title} : tl))
+    setTodolists(nextState)
+  }
   const deleteTodolist = (todolistId: TodolistType['id']) => {
     //Удаляем тудулист
     const nextState = todolists.filter(tl => tl.id !== todolistId)
@@ -87,7 +100,16 @@ function App() {
     //Устанавливаем новую копию
     setTasks(copyTasksState)
   }
-
+  const createToDolist = (title: TodolistType['title']) => {
+    const newTodolistId = v1()
+    const newTodolist: TodolistType = {
+      id: newTodolistId,
+      title: title,
+      filter: 'all',
+    }
+    setTodolists([...todolists, newTodolist])
+    setTasks({...tasks, [newTodolistId]: []})
+  }
 
   //GUI
   const todolistComponents = todolists.map(tl => {
@@ -110,6 +132,8 @@ function App() {
         changeToDoListFilter={changeToDoListFilter}
         createTask={createTask}
         changetaskStatus={changetaskStatus}
+        changeToDolistTitle={changeToDolistTitle}
+        changeTaskTitle={changeTaskTitle}
       />
       )
 
@@ -117,6 +141,7 @@ function App() {
 
   return (
     <div className="app">
+      <CreateItemForm createItem={createToDolist} maxTitleLength={10}/>
       {todolistComponents}
     </div>
   )
