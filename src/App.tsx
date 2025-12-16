@@ -1,14 +1,17 @@
 import './App.css'
-import {Todolist} from "./Todolist.tsx";
+import {Todolist} from './Todolist.tsx';
+import {FilterValuesType, Task, TasksStateType, TodolistType} from './commontypes.ts';
+import {useState} from 'react';
+import {v1} from 'uuid';
+import {CreateItemForm} from './CreateItemForm.tsx';
 import {
-  FilterValuesType,
-  Task,
-  TasksStateType,
-  TodolistType
-} from "./commontypes.ts";
-import {useState} from "react";
-import {v1} from "uuid";
-import {CreateItemForm} from "./CreateItemForm.tsx";
+  AppBar, Box, Button, Container, createTheme,
+  CssBaseline, Grid, IconButton, Paper, Switch, ThemeProvider, Toolbar
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu'
+import {container} from './Todolist.styles.ts';
+import {NavButton} from './NavButton.ts';
+import {amber, green} from '@mui/material/colors';
 
 function App() {
   //BLL
@@ -82,11 +85,17 @@ function App() {
 
   //todolists
   const changeToDoListFilter = (nextFilterValue: FilterValuesType, todolistId: TodolistType['id']) => {
-    const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {...tl, filter: nextFilterValue} : tl))
+    const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {
+      ...tl,
+      filter: nextFilterValue
+    } : tl))
     setTodolists(nextState)
   }
   const changeToDolistTitle = (title: TodolistType['title'], todolistId: TodolistType['id']) => {
-    const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {...tl, title: title} : tl))
+    const nextState: TodolistType[] = todolists.map((tl => tl.id === todolistId ? {
+      ...tl,
+      title: title
+    } : tl))
     setTodolists(nextState)
   }
   const deleteTodolist = (todolistId: TodolistType['id']) => {
@@ -97,7 +106,7 @@ function App() {
     //Создаем копию tasks БЕЗ удаленного тудулиста
     const copyTasksState = {...tasks}
     delete copyTasksState[todolistId]// мутируем КОПИЮ
-    //Устанавливаем новую копию
+    //устанавливаем новую копию
     setTasks(copyTasksState)
   }
   const createToDolist = (title: TodolistType['title']) => {
@@ -121,28 +130,76 @@ function App() {
       filteredTasks = filteredTasks.filter(t => t.isDone === true)
     }
     return (
-      <Todolist
-        todolistId={tl.id}
-        key={tl.id}
-        title={tl.title}
-        tasks={filteredTasks}
-        filter={tl.filter}
-        deleteTask={deleteTask}
-        deleteTodolist={deleteTodolist}
-        changeToDoListFilter={changeToDoListFilter}
-        createTask={createTask}
-        changetaskStatus={changetaskStatus}
-        changeToDolistTitle={changeToDolistTitle}
-        changeTaskTitle={changeTaskTitle}
-      />
-      )
+      <Grid key={tl.id}>
+        <Paper
+          elevation={8}
+          sx={{padding: '15px'}}
+        >
+          <Todolist
+            todolistId={tl.id}
+            key={tl.id}
+            title={tl.title}
+            tasks={filteredTasks}
+            filter={tl.filter}
+            deleteTask={deleteTask}
+            deleteTodolist={deleteTodolist}
+            changeToDoListFilter={changeToDoListFilter}
+            createTask={createTask}
+            changetaskStatus={changetaskStatus}
+            changeToDolistTitle={changeToDolistTitle}
+            changeTaskTitle={changeTaskTitle}
+          />
+        </Paper>
+      </Grid>
+    )
 
   })
 
+  const [isDark, setIsDark] = useState(false)
+  const theme = createTheme({
+    palette: {
+      primary: green,
+      secondary: amber,
+      mode: isDark ? "dark" : "light"
+    }
+  })
   return (
     <div className="app">
-      <CreateItemForm createItem={createToDolist} maxTitleLength={10}/>
-      {todolistComponents}
+      <ThemeProvider theme={theme}>
+        <CssBaseline/>
+        <AppBar position="static">
+          <Toolbar sx={container}>
+            <IconButton color="inherit">
+              <MenuIcon />
+            </IconButton>
+            <Box>
+              <NavButton>Sign in</NavButton>
+              <NavButton>Sign out</NavButton>
+              <NavButton background={theme.palette.secondary.dark}>FAQ</NavButton>
+              <Switch onChange={() => setIsDark(!isDark)} />
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <Container
+          maxWidth="lg"
+        >
+          <Grid
+            container
+            sx={{padding: '15px 0'}}
+          >
+            <CreateItemForm
+              createItem={createToDolist}
+              maxTitleLength={10}
+            />
+          </Grid>
+          <Grid
+            container
+            spacing={4}
+          >
+            {todolistComponents}
+          </Grid>
+        </Container>
+      </ThemeProvider>
     </div>
   )
 }

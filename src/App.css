@@ -1,10 +1,25 @@
+/*.app {*/
+/*  padding: 30px;*/
+/*  display: flex;*/
+/*}*/
+
+/*.app > div {*/
+/*  margin-right: 50px;*/
+/*}*/
 .app {
-  padding: 30px;
   display: flex;
+  flex-direction: column;
+  width: 100vw;
 }
 
-.app > div {
-  margin-right: 50px;
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.is-done {
+  opacity: 0.5;
 }
 
 .task {

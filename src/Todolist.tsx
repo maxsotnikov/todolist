@@ -1,7 +1,18 @@
-import {Button} from "./Button.tsx";
-import {FilterValuesType, Task, TodolistType} from "./commontypes.ts";
-import {CreateItemForm} from "./CreateItemForm.tsx";
-import {EditableSpan} from "./EditableSpan.tsx";
+// import {Button} from "./Button.tsx";
+import {FilterValuesType, Task, TodolistType} from './commontypes.ts';
+import {CreateItemForm} from './CreateItemForm.tsx';
+import {EditableSpan} from './EditableSpan.tsx';
+import {
+  Box,
+  Button,
+  Checkbox,
+  IconButton,
+  List,
+  ListItem,
+  Typography
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {container, getListItemSx} from './Todolist.styles.ts';
 
 type Props = {
   todolistId: TodolistType['id']
@@ -33,30 +44,38 @@ export const Todolist = ({
 
   const list = tasks.length === 0
     ? <span>Your takslist is empty</span>
-    : <ul>
+    : <List>
       {tasks.map(t => {
         const changeTaskTitleHandler = (newTitle: Task['title']) => {
           changeTaskTitle(t.id, newTitle, todolistId)
         }
         return (
-          <li className={t.isDone ? 'task-done' : 'task'}>
-            <input
-              type="checkbox"
+          <ListItem
+            // className={t.isDone ? 'task-done' : 'task'}
+            disablePadding
+            sx={container}
+          >
+            <Checkbox
+              size="small"
               checked={t.isDone}
               onChange={e => changetaskStatus(t.id, e.currentTarget.checked, todolistId)}
             />
-            <EditableSpan
-              title={t.title}
-              changeTitle={changeTaskTitleHandler}
-            />
-            <Button
-              title={'x'}
+            <Box sx={getListItemSx(t.isDone)}>
+              <EditableSpan
+                title={t.title}
+                changeTitle={changeTaskTitleHandler}
+              />
+            </Box>
+
+            <IconButton
               onClick={() => deleteTask(t.id, todolistId)}
-            />
-          </li>
+            >
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
         )
       })}
-    </ul>
+    </List>
 
   const createTaskHandler = (taskTitle: Task['title']) => {
     createTask(taskTitle, todolistId)
@@ -67,38 +86,54 @@ export const Todolist = ({
 
   return (
     <div>
-      <h3>
+      <Typography
+        variant="h5"
+        sx={container}
+      >
         <EditableSpan
           title={title}
           changeTitle={changeTodolistTitleHandler}
         />
-        <Button
-          title={'x'}
+        <IconButton
           onClick={() => deleteTodolist(todolistId)}
-        />
-      </h3>
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Typography>
       <CreateItemForm
         createItem={createTaskHandler}
         maxTitleLength={10}
       />
       {list}
-      <div>
+      <Box sx={container}>
         <Button
-          title={'Все'}
-          classname={filter === 'all' ? 'btn-filter-active' : ''}
+          variant="contained"
+          size="small"
+          color={filter === 'all' ? 'secondary' : 'primary'}
+          disableElevation
           onClick={() => changeToDoListFilter('all', todolistId)}
-        />
+        >
+          All
+        </Button>
         <Button
-          title={'В работе'}
-          classname={filter === 'active' ? 'btn-filter-active' : ''}
+          variant="contained"
+          size="small"
+          color={filter === 'active' ? 'secondary' : 'primary'}
+          disableElevation
           onClick={() => changeToDoListFilter('active', todolistId)}
-        />
+        >
+          Active
+        </Button>
         <Button
-          title={'Сделано'}
-          classname={filter === 'completed' ? 'btn-filter-active' : ''}
+          variant="contained"
+          size="small"
+          color={filter === 'completed' ? 'secondary' : 'primary'}
+          disableElevation
           onClick={() => changeToDoListFilter('completed', todolistId)}
-        />
-      </div>
+        >
+          Completed
+        </Button>
+      </Box>
     </div>
   )
 }
