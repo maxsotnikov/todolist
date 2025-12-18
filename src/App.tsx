@@ -1,17 +1,27 @@
 import './App.css'
 import {Todolist} from './Todolist.tsx';
-import {FilterValuesType, Task, TasksStateType, TodolistType} from './commontypes.ts';
+import {
+  FilterValuesType,
+  Task,
+  TasksStateType,
+  TodolistType
+} from './commontypes.ts';
 import {useState} from 'react';
 import {v1} from 'uuid';
 import {CreateItemForm} from './CreateItemForm.tsx';
-import {
-  AppBar, Box, Button, Container, createTheme,
-  CssBaseline, Grid, IconButton, Paper, Switch, ThemeProvider, Toolbar
-} from '@mui/material';
+import {createTheme, ThemeProvider,} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
 import {container} from './Todolist.styles.ts';
 import {NavButton} from './NavButton.ts';
-import {amber, green} from '@mui/material/colors';
 
 function App() {
   //BLL
@@ -132,7 +142,7 @@ function App() {
     return (
       <Grid key={tl.id}>
         <Paper
-          elevation={8}
+          elevation={10}
           sx={{padding: '15px'}}
         >
           <Todolist
@@ -145,8 +155,8 @@ function App() {
             deleteTodolist={deleteTodolist}
             changeToDoListFilter={changeToDoListFilter}
             createTask={createTask}
-            changetaskStatus={changetaskStatus}
-            changeToDolistTitle={changeToDolistTitle}
+            changeTaskStatus={changetaskStatus}
+            changeTodolistTitle={changeToDolistTitle}
             changeTaskTitle={changeTaskTitle}
           />
         </Paper>
@@ -158,24 +168,37 @@ function App() {
   const [isDark, setIsDark] = useState(false)
   const theme = createTheme({
     palette: {
-      primary: green,
-      secondary: amber,
-      mode: isDark ? "dark" : "light"
+      primary: {
+        main: '#425363',
+      },
+      secondary: {
+        main: '#E1E4E3',
+      },
+      info: {
+        main: '#A90101',
+        contrastText: '#ffffff'
+      },
+      mode: isDark ? 'dark' : 'light'
     }
   })
   return (
     <div className="app">
       <ThemeProvider theme={theme}>
-        <CssBaseline/>
+        <CssBaseline />
         <AppBar position="static">
           <Toolbar sx={container}>
             <IconButton color="inherit">
               <MenuIcon />
             </IconButton>
             <Box>
-              <NavButton>Sign in</NavButton>
+              <NavButton >Sign in</NavButton>
               <NavButton>Sign out</NavButton>
-              <NavButton background={theme.palette.secondary.dark}>FAQ</NavButton>
+              <NavButton
+                background={theme.palette.info.main}
+                txtColor={theme.palette.info.contrastText}
+              >
+                FAQ
+              </NavButton>
               <Switch onChange={() => setIsDark(!isDark)} />
             </Box>
           </Toolbar>

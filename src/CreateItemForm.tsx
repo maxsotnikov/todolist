@@ -1,6 +1,8 @@
 import {KeyboardEvent, ChangeEvent, useState} from 'react'
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import {Box, IconButton, TextField} from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 type Props = {
   createItem: (title: string) => void
@@ -39,6 +41,7 @@ export const CreateItemForm = ({createItem, maxTitleLength}: Props) => {
       <TextField
         variant="outlined"
         size="small"
+        label={'Enter a title'}
         placeholder={`max length must be ${maxTitleLength} charters`}
         value={itemInput}
         error={error}
