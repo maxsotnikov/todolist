@@ -1,13 +1,13 @@
 import {beforeEach, expect, test} from 'vitest'
-import {TasksStateType} from '../commontypes.ts';
+import {TasksStateType} from '../common/commontypes.ts';
 import {
   ChangeTaskStatusAC,
   ChangeTaskTitleAC,
   CreateTaskAC,
   DeleteTaskAC,
   tasksReducer
-} from './tasksReducer.ts';
-import {CreateTodolistAC, DeleteTodolistAC} from './todolistReducer.ts';
+} from './tasks-reducer.ts';
+import {CreateTodolistAC, DeleteTodolistAC} from './todolists-reducer.ts';
 
 let startState: TasksStateType = {}
 
@@ -40,7 +40,7 @@ test('array should be created for new todolist', () => {
 })
 
 test('property with todolistId should be deleted', () => {
-  const endState = tasksReducer(startState, DeleteTodolistAC('todolistId2'))
+  const endState = tasksReducer(startState, DeleteTodolistAC({id: 'todolistId2'}))
 
   const keys = Object.keys(endState)
 

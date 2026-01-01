@@ -1,5 +1,5 @@
 // import {Button} from "./Button.tsx";
-import {FilterValuesType, Task, TodolistType} from './commontypes.ts';
+import {FilterValuesType, Task, TodolistType} from './common/commontypes.ts';
 import {CreateItemForm} from './CreateItemForm.tsx';
 import {EditableSpan} from './EditableSpan.tsx';
 import Button from '@mui/material/Button';
@@ -50,6 +50,7 @@ export const Todolist = ({
         return (
           <ListItem
             // className={t.isDone ? 'task-done' : 'task'}
+            key={t.id}
             disablePadding
             sx={container}
           >
