@@ -15,3 +15,5 @@ export type TodolistType = {
 export type TasksStateType = {
   [todolistId: string]: Task[]
 }
+
+export type ThemeMode = 'dark' | 'light'

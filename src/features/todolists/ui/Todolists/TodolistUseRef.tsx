@@ -1,5 +1,5 @@
-import {Button} from "./Button.tsx";
-import {FilterValuesType, Task} from "./common/commontypes.ts";
+import {Button} from '@/common/components/Button/Button.tsx';
+import {FilterValuesType, Task} from '@/common/commontypes.ts';
 import {useRef} from "react";
 
 type Props = {
